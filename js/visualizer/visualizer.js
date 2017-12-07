@@ -1,6 +1,6 @@
 function Visualizer() {
     var paperInstance,
-        equidistantFactor = 30,
+        equidistantFactor = 40,
         clientInput = {
             channelsNo: 0,
             planetsNo: 0
@@ -8,27 +8,40 @@ function Visualizer() {
         graphInputs = {
             canvasX: 400,
             canvasY: 350,
-            planetRadius: 2,
+            planet: {
+                planetRadius: 5,
+                color: '#4AA8D6'
+            },
             sunRadius: 30,
-            channel: '',
-            satteliteRadius: 7
+            channel: {
+                color: ''
+            },
+            satellite:{
+                satteliteDistance: 15,
+                color: 'white'
+            }
+            
         },
         planetsData = [],
         channelsData = [],
         satellitesData = [],
 
         generatePlanetInfo = function (radius, theta, planetNo, lev) {
-            var entity = (lev !== clientInput.planetsNo) ? 'planet_' : 'satellite_'
+            var entity = (lev !== clientInput.planetsNo) ? 'planet_' : 'satellite_',
+                color  = (entity === 'planet_') ? graphInputs.planet.color : graphInputs.satellite.color,
+                stroke =  (entity === 'planet_') ? graphInputs.planet.color : 'black';
             return {
                 X: graphInputs.canvasX + (radius * Math.cos(theta)),
                 Y: graphInputs.canvasY + (radius * Math.sin(theta)),
                 label: entity + planetNo,
-                level: lev
+                level: lev,
+                color: color,
+                stroke: stroke
             };
 
         },
         computeSatelliteAxisPosition = function () {
-            var rad = graphInputs.satteliteRadius;
+            var rad = graphInputs.satellite.satteliteDistance+graphInputs.planet.planetRadius;
             for (var satellite of satellitesData) {
 
                 var x = satellite.X,
@@ -92,10 +105,10 @@ function Visualizer() {
         },
         renderPlanets = function () {
             for (let planet of planetsData) {
-                var circle = paperInstance.circle(planet.X, planet.Y, graphInputs.planetRadius);
-                // Sets the fill attribute of the circle to red (#f00)
+                var circle = paperInstance.circle(planet.X, planet.Y, graphInputs.planet.planetRadius);
                 circle.attr({
-                    "fill": 'blue'
+                    "fill": planet.color,
+                    "stroke": planet.stroke
                 });
                 circle.id = planet.label;
             }
@@ -106,18 +119,18 @@ function Visualizer() {
                 var line = paperInstance.path(['M', graphInputs.canvasX, graphInputs.canvasY, 'L', channel.X, channel.Y]);
                 // Sets the fill attribute of the circle to red (#f00)
                 line.attr({
-                    "stroke": 'blue'
+                    "stroke": graphInputs.planet.color
                 });
 
             }
         },
         drawSun = function () {
-            var circle = paperInstance.circle(graphInputs.canvasX, graphInputs.canvasY, graphInputs.sunRadius);
+            var circle = paperInstance.circle(graphInputs.canvasX, graphInputs.canvasY, graphInputs.planet.planetRadius*5);
             // Sets the fill attribute of the circle to red (#f00)
             circle.attr({
                 "fill": 'white',
-                'stroke-width': 5,
-                'stroke': 'blue'
+                'stroke-width': 3,
+                'stroke': '#111539'
             });
         },
         drawSattelites = function () {
@@ -130,7 +143,7 @@ function Visualizer() {
                     line.attr({
                         "stroke": 'blue'
                     });
-                    var circle = paperInstance.circle(elem.X, elem.Y, 2);
+                    var circle = paperInstance.circle(elem.X, elem.Y, graphInputs.planet.planetRadius/2);
                     circle.attr({
                         "fill": 'black'
                     });
