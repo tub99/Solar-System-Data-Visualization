@@ -27,54 +27,69 @@ function Visualizer() {
         satellitesData = [],
 
         generatePlanetInfo = function (radius, theta, planetNo, lev) {
-            var entity = (lev !== clientInput.planetsNo) ? 'planet_' : 'satellite_',
-                color = (entity === 'planet_') ? graphInputs.planet.color : graphInputs.satellite.color,
-                stroke = (entity === 'planet_') ? graphInputs.planet.color : 'black';
+
+            var color = graphInputs.planet.color,
+                stroke = 'black';
             return {
                 X: graphInputs.canvasX + (radius * Math.cos(theta)),
                 Y: graphInputs.canvasY + (radius * Math.sin(theta)),
-                label: entity + planetNo,
+                label: 'planet_' + planetNo,
                 level: lev,
                 color: color,
                 stroke: stroke
             };
 
         },
-        computeSatelliteAxisPosition = function () {
-            var rad = graphInputs.satellite.satteliteDistance + graphInputs.planet.planetRadius,
-                cnt =0;
-            for (var satellite of planetsData) {
-                cnt++;
-                var x = satellite.X,
-                    y = satellite.Y,
-                    theta = 45 * (Math.PI / 180),
-                    factor = 90 * (Math.PI / 180);
-                // 4 sattelitse at 90 degree separate from each other
-                // 1st one at 45 , 2nd = 45+90 , 3rd = 45+90+90, 4th= 45+270
-                satellite.axis = {
-                    first: {
-                        X: x + rad * Math.cos(theta),
-                        Y: y + rad * Math.sin(theta)
-                    },
-                    second: {
-                        X: x + rad * Math.cos(theta + factor),
-                        Y: y + rad * Math.sin(theta + factor)
-                    },
-                    third: {
-                        X: x + rad * Math.cos(theta + 2 * factor),
-                        Y: y + rad * Math.sin(theta + 2 * factor)
-                    },
-                    fourth: {
-                        X: x + rad * Math.cos(theta + 3 * factor),
-                        Y: y + rad * Math.sin(theta + 3 * factor)
+        attatchHoverEvent = function (planetNode) {
+            var satteliteAxis;
+            planetNode.hover(function () {
+                var satId = 'satellite_' + planetNode.id.split('_')[1];
+                for (var satElem of satellitesData) {
+                    if (satElem.id === satId) {
+                        satteliteAxis = satElem;
+                        satElem.show();
                     }
-                };
-                satellite.label = 'satellite_'+cnt;
-                console.log(satellite);
+                }
+            }, function(){
+                satteliteAxis.hide();
+            })
 
-            }
+        }
+    computeSatelliteAxisPosition = function () {
+        var rad = graphInputs.satellite.satteliteDistance + graphInputs.planet.planetRadius,
+            cnt = 0;
+        for (var satellite of planetsData) {
+            cnt++;
+            var x = satellite.X,
+                y = satellite.Y,
+                theta = 45 * (Math.PI / 180),
+                factor = 90 * (Math.PI / 180);
+            // 4 sattelitse at 90 degree separate from each other
+            // 1st one at 45 , 2nd = 45+90 , 3rd = 45+90+90, 4th= 45+270
+            satellite.axis = {
+                first: {
+                    X: x + rad * Math.cos(theta),
+                    Y: y + rad * Math.sin(theta)
+                },
+                second: {
+                    X: x + rad * Math.cos(theta + factor),
+                    Y: y + rad * Math.sin(theta + factor)
+                },
+                third: {
+                    X: x + rad * Math.cos(theta + 2 * factor),
+                    Y: y + rad * Math.sin(theta + 2 * factor)
+                },
+                fourth: {
+                    X: x + rad * Math.cos(theta + 3 * factor),
+                    Y: y + rad * Math.sin(theta + 3 * factor)
+                }
+            };
+            satellite.axis_label = 'satellite_' + cnt;
+            console.log(satellite);
 
-        },
+        }
+
+    },
         computeSystemPosition = function () {
             var separationangle = 360 / clientInput.channelsNo;
             // parametric position RCosTheta, RSinTheta
@@ -114,6 +129,7 @@ function Visualizer() {
                 circle.id = planet.label;
                 // Setting to DOM element
                 circle.node.setAttribute('id', planet.label);
+                attatchHoverEvent(circle);
             }
         },
         renderChannels = function () {
@@ -154,7 +170,11 @@ function Visualizer() {
                     // add satellites to set
                     st.push(line, circle);
                 }
-                
+                st.id = satellite.axis_label;
+                st.hide();
+                satellitesData.push(st);
+                //st.node.setAttribute('id', elem.label);
+
             }
 
 
