@@ -3,16 +3,17 @@
 </head>
 
 <body id="myBody">
-
+    <div>
+        <input type="text" id="search-box">Enter the planet id to search</input>
+    </div>
     <div id="canvas"></div>
-    <div id="tooltip"></div>
     <script type="text/javascript" src="js/lib/raphael.js"></script>
     <script type="text/javascript" src="js/lib/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/visualizer/visualizer.js"></script>
     <script type="text/javascript" src="js/visualizer/visualization-manager.js"></script>
     <script type="text/javascript">
         var paper = Raphael(document.getElementById('canvas'), 1500, 1500);
-        var manager=  new VisualizationManager();
+        var manager = new VisualizationManager();
         manager.createSolarSystem(paper);
         console.log(paper);
     </script>

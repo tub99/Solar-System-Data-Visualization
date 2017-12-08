@@ -1,8 +1,14 @@
 var VisualizationManager = function () {};
 
-VisualizationManager.prototype.createSolarSystem = function(paper){
+VisualizationManager.prototype.createSolarSystem = function (paper) {
     var viz = new Visualizer();
-    viz.setClientInput(20, 2);
+    viz.setClientInput(20, 5);
     viz.renderSolarSystem(paper);
-    //viz.searchPlanet('planet_3');
+    $('#search-box').keypress(function (e) {
+        if (e.which === 13) {
+            viz.searchPlanet($('#search-box')[0].value.toString());
+            return false; 
+        }
+    });
+
 }

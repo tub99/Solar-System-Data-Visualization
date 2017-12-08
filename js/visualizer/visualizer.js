@@ -1,6 +1,6 @@
 function Visualizer() {
     var paperInstance,
-        equidistantFactor = 200,
+        equidistantFactor = 60,
         clientInput = {
             channelsNo: 0,
             planetsNo: 0
@@ -12,7 +12,7 @@ function Visualizer() {
                 planetRadius: 5,
                 color: '#4AA8D6'
             },
-            sunRadius: 30,
+            sunRadius: 15,
             channel: {
                 color: ''
             },
@@ -33,10 +33,11 @@ function Visualizer() {
             return {
                 X: graphInputs.canvasX + (radius * Math.cos(theta)),
                 Y: graphInputs.canvasY + (radius * Math.sin(theta)),
-                label: 'planet_' + planetNo,
+                label: 'planet_' + planetNo + '-' + lev,
                 level: lev,
                 color: color,
-                stroke: stroke
+                stroke: stroke,
+                satelliteLabel: 'satellite_' + planetNo + '-' + lev
             };
 
         },
@@ -50,57 +51,57 @@ function Visualizer() {
                         satElem.show();
                     }
                 }
-            }, function(){
+            }, function () {
                 satteliteAxis.hide();
-            })
+            });
 
         }
     computeSatelliteAxisPosition = function () {
-        var rad = graphInputs.satellite.satteliteDistance + graphInputs.planet.planetRadius,
-            cnt = 0;
-        for (var satellite of planetsData) {
-            cnt++;
-            var x = satellite.X,
-                y = satellite.Y,
-                theta = 45 * (Math.PI / 180),
-                factor = 90 * (Math.PI / 180);
-            // 4 sattelitse at 90 degree separate from each other
-            // 1st one at 45 , 2nd = 45+90 , 3rd = 45+90+90, 4th= 45+270
-            satellite.axis = {
-                first: {
-                    X: x + rad * Math.cos(theta),
-                    Y: y + rad * Math.sin(theta)
-                },
-                second: {
-                    X: x + rad * Math.cos(theta + factor),
-                    Y: y + rad * Math.sin(theta + factor)
-                },
-                third: {
-                    X: x + rad * Math.cos(theta + 2 * factor),
-                    Y: y + rad * Math.sin(theta + 2 * factor)
-                },
-                fourth: {
-                    X: x + rad * Math.cos(theta + 3 * factor),
-                    Y: y + rad * Math.sin(theta + 3 * factor)
-                }
-            };
-            satellite.axis_label = 'satellite_' + cnt;
-            console.log(satellite);
+            var rad = graphInputs.satellite.satteliteDistance + graphInputs.planet.planetRadius,
+                cnt = 0;
+            for (var satellite of planetsData) {
+                cnt++;
+                var x = satellite.X,
+                    y = satellite.Y,
+                    theta = 45 * (Math.PI / 180),
+                    factor = 90 * (Math.PI / 180);
+                // 4 sattelitse at 90 degree separate from each other
+                // 1st one at 45 , 2nd = 45+90 , 3rd = 45+90+90, 4th= 45+270
+                satellite.axis = {
+                    first: {
+                        X: x + rad * Math.cos(theta),
+                        Y: y + rad * Math.sin(theta)
+                    },
+                    second: {
+                        X: x + rad * Math.cos(theta + factor),
+                        Y: y + rad * Math.sin(theta + factor)
+                    },
+                    third: {
+                        X: x + rad * Math.cos(theta + 2 * factor),
+                        Y: y + rad * Math.sin(theta + 2 * factor)
+                    },
+                    fourth: {
+                        X: x + rad * Math.cos(theta + 3 * factor),
+                        Y: y + rad * Math.sin(theta + 3 * factor)
+                    }
+                };
+                //satellite.axis_label = 'satellite_' + cnt;
+                console.log(satellite);
 
-        }
+            }
 
-    },
+        },
         computeSystemPosition = function () {
             var separationangle = 360 / clientInput.channelsNo;
             // parametric position RCosTheta, RSinTheta
-            var totalRad = graphInputs.totalRadius = equidistantFactor * clientInput.planetsNo,
-                cnt = 0;
+            var totalRad = graphInputs.totalRadius = equidistantFactor * clientInput.planetsNo;
             for (var i = 1; i <= clientInput.planetsNo; i++) {
+                var cnt = 0;
                 for (var j = 1; j <= clientInput.channelsNo; j++) {
                     cnt++;
                     var rad = equidistantFactor * (i),
                         theta = (separationangle * (j)) * (Math.PI / 180),
-                        planetInfo = generatePlanetInfo(rad, theta, cnt, i);
+                        planetInfo = generatePlanetInfo(rad, theta, j, i);
                     planetsData.push(planetInfo);
                     // All satellite data
                     if (i === clientInput.planetsNo) {
@@ -170,16 +171,12 @@ function Visualizer() {
                     // add satellites to set
                     st.push(line, circle);
                 }
-                st.id = satellite.axis_label;
+                st.id = satellite.satelliteLabel;
                 st.hide();
                 satellitesData.push(st);
                 //st.node.setAttribute('id', elem.label);
 
             }
-
-
-
-
         }
     this.setClientInput = function (channels, planets) {
         clientInput.channelsNo = channels || 40;
@@ -189,10 +186,14 @@ function Visualizer() {
         return clientInput;
     }
     this.searchPlanet = function (planetId) {
+        this.renderSolarSystem(paperInstance);
         var planet = paperInstance.getById(planetId);
+        if (!planet) alert('Planet Not Found');
         //highlight and zoom the searched planet
-
-        planet.glow({ width: 20, color: 'red' });
+        planet.glow({
+            width: 10,
+            color: 'red'
+        });
         // setTimeout(function () {
         //     planet.hide();
         // }, 2000)
@@ -200,7 +201,6 @@ function Visualizer() {
     this.renderSolarSystem = function (paper) {
         paperInstance = paper;
         computeSystemPosition();
-
         renderChannels();
         drawSun();
         drawSattelites();
