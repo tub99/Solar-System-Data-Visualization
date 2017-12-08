@@ -1,13 +1,13 @@
 function Visualizer() {
     var paperInstance,
-        equidistantFactor = 40,
+        equidistantFactor = 200,
         clientInput = {
             channelsNo: 0,
             planetsNo: 0
         },
         graphInputs = {
-            canvasX: 400,
-            canvasY: 350,
+            canvasX: 600,
+            canvasY: 650,
             planet: {
                 planetRadius: 5,
                 color: '#4AA8D6'
@@ -41,9 +41,10 @@ function Visualizer() {
 
         },
         computeSatelliteAxisPosition = function () {
-            var rad = graphInputs.satellite.satteliteDistance + graphInputs.planet.planetRadius;
-            for (var satellite of satellitesData) {
-
+            var rad = graphInputs.satellite.satteliteDistance + graphInputs.planet.planetRadius,
+                cnt =0;
+            for (var satellite of planetsData) {
+                cnt++;
                 var x = satellite.X,
                     y = satellite.Y,
                     theta = 45 * (Math.PI / 180),
@@ -68,7 +69,7 @@ function Visualizer() {
                         Y: y + rad * Math.sin(theta + 3 * factor)
                     }
                 };
-
+                satellite.label = 'satellite_'+cnt;
                 console.log(satellite);
 
             }
@@ -93,7 +94,7 @@ function Visualizer() {
                         //set the channels extremeties
                         channelsData.push(planetInfo);
                         // set the satellites
-                        satellitesData.push(planetInfo);
+                        //satellitesData.push(planetInfo);
                     }
 
                 }
@@ -112,7 +113,7 @@ function Visualizer() {
                 });
                 circle.id = planet.label;
                 // Setting to DOM element
-                circle.node.setAttribute('id',planet.label );
+                circle.node.setAttribute('id', planet.label);
             }
         },
         renderChannels = function () {
@@ -136,7 +137,8 @@ function Visualizer() {
             });
         },
         drawSattelites = function () {
-            for (var satellite of satellitesData) {
+            for (var satellite of planetsData) {
+                var st = paperInstance.set();
                 for (var p in satellite.axis) {
                     var elem = satellite.axis[p];
                     //draw axis lines
@@ -150,9 +152,9 @@ function Visualizer() {
                         "fill": 'black'
                     });
                     // add satellites to set
-                    var st = paperInstance.set();
                     st.push(line, circle);
                 }
+                
             }
 
 
