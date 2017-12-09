@@ -2,7 +2,7 @@ var VisualizationManager = function () {};
 
 VisualizationManager.prototype.createSolarSystem = function (paper) {
     var viz = new Visualizer();
-    viz.setClientInput(20, 5);
+    viz.setClientInput(40, 25);
     viz.renderSolarSystem(paper);
     $('#search-box').keypress(function (e) {
         if (e.which === 13) {

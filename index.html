@@ -1,5 +1,12 @@
 <head>
-
+    <style type="text/css">
+        div#canvas {
+            width: 850px;
+            height: 850px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body id="myBody">
@@ -8,11 +15,14 @@
     </div>
     <div id="canvas"></div>
     <script type="text/javascript" src="js/lib/raphael.js"></script>
+    <script type="text/javascript" src="js/lib/raphael.pan-zoom.min.js"></script>
     <script type="text/javascript" src="js/lib/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="js/visualizer/visualizer.js"></script>
     <script type="text/javascript" src="js/visualizer/visualization-manager.js"></script>
     <script type="text/javascript">
         var paper = Raphael(document.getElementById('canvas'), 1500, 1500);
+        var panZoom = paper.panzoom({ initialZoom: 2, initialPosition: { x: 0, y: 0 } });
+        panZoom.enable();
         var manager = new VisualizationManager();
         manager.createSolarSystem(paper);
         console.log(paper);

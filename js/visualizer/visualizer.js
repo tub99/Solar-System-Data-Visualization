@@ -1,18 +1,18 @@
 function Visualizer() {
     var paperInstance,
-        equidistantFactor = 60,
+        equidistantFactor = 10,
         clientInput = {
             channelsNo: 0,
             planetsNo: 0
         },
         graphInputs = {
-            canvasX: 600,
-            canvasY: 650,
+            canvasX: 300,
+            canvasY: 250,
             planet: {
-                planetRadius: 5,
+                planetRadius: 1,
                 color: '#4AA8D6'
             },
-            sunRadius: 15,
+            sunRadius: 5,
             channel: {
                 color: ''
             },
