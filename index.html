@@ -6,12 +6,17 @@
             border: 1px solid #ccc;
             overflow: hidden;
         }
+        input#search-box {
+            width: 300px;
+        }
     </style>
 </head>
 
 <body id="myBody">
     <div>
-        <input type="text" id="search-box">Enter the planet id to search</input>
+        <input type="text" id="search-box" placeholder="planet_NAME-CHANNELNO">
+            Enter the planet id to search Eg: planet_L-10
+        </input>
     </div>
     <div id="canvas"></div>
     <script type="text/javascript" src="js/lib/raphael.js"></script>

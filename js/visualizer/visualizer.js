@@ -126,7 +126,7 @@ function Visualizer() {
                 var circle = paperInstance.circle(planet.X, planet.Y, graphInputs.planet.planetRadius);
                 circle.attr({
                     "fill": planet.color,
-                    "stroke": planet.stroke
+                    "stroke": planet.color
                 });
                 circle.id = planet.label;
                 // Setting to DOM element
