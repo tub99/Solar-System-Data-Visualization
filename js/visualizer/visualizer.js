@@ -6,8 +6,8 @@ function Visualizer() {
             planetsNo: 0
         },
         graphInputs = {
-            canvasX: 850/3+50,
-            canvasY: 850/3,
+            canvasX: 850 / 3 + 50,
+            canvasY: 850 / 3,
             planet: {
                 planetRadius: 1,
                 color: '#4AA8D6'
@@ -47,7 +47,7 @@ function Visualizer() {
                 textElem;
             planetNode.hover(function () {
                 var satId = 'satellite_' + planetNode.id.split('_')[1];
-                textElem =paperInstance.getById('text_'+planetNode.id);
+                textElem = paperInstance.getById('text_' + planetNode.id);
                 textElem.show();
                 for (var satElem of satellitesData) {
                     if (satElem.id === satId) {
@@ -90,8 +90,6 @@ function Visualizer() {
                         Y: y + rad * Math.sin(theta + 3 * factor)
                     }
                 };
-                //satellite.axis_label = 'satellite_' + cnt;
-                console.log(satellite);
 
             }
 
@@ -106,7 +104,7 @@ function Visualizer() {
                     cnt--;
                     var rad = equidistantFactor * (i),
                         theta = (separationangle * (j)) * (Math.PI / 180),
-                        planetName = String.fromCharCode(64+i),
+                        planetName = String.fromCharCode(64 + i),
                         planetInfo = generatePlanetInfo(rad, theta, planetName, j);
                     planetsData.push(planetInfo);
                     // All satellite data
@@ -122,9 +120,6 @@ function Visualizer() {
                 }
             }
             computeSatelliteAxisPosition();
-            //console.log(planetsData);
-
-
         },
         renderPlanets = function () {
             for (let planet of planetsData) {
@@ -138,9 +133,11 @@ function Visualizer() {
                 circle.node.setAttribute('id', planet.label);
                 // planet text
                 var text = paperInstance.text(planet.X, planet.Y, planet.label.split('_')[1])
-                            .attr({fill: 'maroon'})
-                            .translate(-15,0);
-                text.id = 'text_'+planet.label;
+                    .attr({
+                        fill: 'maroon'
+                    })
+                    .translate(-15, 0);
+                text.id = 'text_' + planet.label;
 
                 text.hide();
                 attatchHoverEvent(circle);
@@ -199,12 +196,12 @@ function Visualizer() {
         return clientInput;
     }
     this.searchPlanet = function (planetId) {
-       // remove glow from previously searched planet
-       if(prevSearchedPlanet) prevSearchedPlanet.remove();
+
+        if (prevSearchedPlanet) prevSearchedPlanet.remove();
         var planet = paperInstance.getById(planetId);
         if (!planet) alert('Planet Not Found');
         //highlight and zoom the searched planet
-         prevSearchedPlanet = planet.glow({
+        prevSearchedPlanet = planet.glow({
             width: 10,
             color: 'red'
         });

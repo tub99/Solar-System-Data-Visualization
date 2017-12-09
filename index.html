@@ -21,11 +21,9 @@
     <script type="text/javascript" src="js/visualizer/visualization-manager.js"></script>
     <script type="text/javascript">
         var paper = Raphael(document.getElementById('canvas'), 1500, 1500);
-        var panZoom = paper.panzoom({ initialZoom: 2, initialPosition: { x: 0, y: 0 } });
-        panZoom.enable();
         var manager = new VisualizationManager();
+        manager.enablePanAndZoom(paper);
         manager.createSolarSystem(paper);
-        console.log(paper);
     </script>
 
 </body>
