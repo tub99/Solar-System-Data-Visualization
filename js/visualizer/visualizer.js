@@ -6,8 +6,8 @@ function Visualizer() {
             planetsNo: 0
         },
         graphInputs = {
-            canvasX: 300,
-            canvasY: 250,
+            canvasX: 850/3+50,
+            canvasY: 850/3,
             planet: {
                 planetRadius: 1,
                 color: '#4AA8D6'
@@ -17,7 +17,7 @@ function Visualizer() {
                 color: ''
             },
             satellite: {
-                satteliteDistance: 15,
+                satteliteDistance: 5,
                 color: 'white'
             }
 
@@ -25,26 +25,30 @@ function Visualizer() {
         planetsData = [],
         channelsData = [],
         satellitesData = [],
+        prevSearchedPlanet,
 
-        generatePlanetInfo = function (radius, theta, planetNo, lev) {
+        generatePlanetInfo = function (radius, theta, planetName, lev) {
 
             var color = graphInputs.planet.color,
                 stroke = 'black';
             return {
                 X: graphInputs.canvasX + (radius * Math.cos(theta)),
                 Y: graphInputs.canvasY + (radius * Math.sin(theta)),
-                label: 'planet_' + planetNo + '-' + lev,
+                label: 'planet_' + planetName + '-' + lev,
                 level: lev,
                 color: color,
                 stroke: stroke,
-                satelliteLabel: 'satellite_' + planetNo + '-' + lev
+                satelliteLabel: 'satellite_' + planetName + '-' + lev
             };
 
         },
         attatchHoverEvent = function (planetNode) {
-            var satteliteAxis;
+            var satteliteAxis,
+                textElem;
             planetNode.hover(function () {
                 var satId = 'satellite_' + planetNode.id.split('_')[1];
+                textElem =paperInstance.getById('text_'+planetNode.id);
+                textElem.show();
                 for (var satElem of satellitesData) {
                     if (satElem.id === satId) {
                         satteliteAxis = satElem;
@@ -53,6 +57,7 @@ function Visualizer() {
                 }
             }, function () {
                 satteliteAxis.hide();
+                textElem.hide();
             });
 
         }
@@ -96,12 +101,13 @@ function Visualizer() {
             // parametric position RCosTheta, RSinTheta
             var totalRad = graphInputs.totalRadius = equidistantFactor * clientInput.planetsNo;
             for (var i = 1; i <= clientInput.planetsNo; i++) {
-                var cnt = 0;
+                var cnt = clientInput.planetsNo;
                 for (var j = 1; j <= clientInput.channelsNo; j++) {
-                    cnt++;
+                    cnt--;
                     var rad = equidistantFactor * (i),
                         theta = (separationangle * (j)) * (Math.PI / 180),
-                        planetInfo = generatePlanetInfo(rad, theta, j, i);
+                        planetName = String.fromCharCode(64+i),
+                        planetInfo = generatePlanetInfo(rad, theta, planetName, j);
                     planetsData.push(planetInfo);
                     // All satellite data
                     if (i === clientInput.planetsNo) {
@@ -130,6 +136,13 @@ function Visualizer() {
                 circle.id = planet.label;
                 // Setting to DOM element
                 circle.node.setAttribute('id', planet.label);
+                // planet text
+                var text = paperInstance.text(planet.X, planet.Y, planet.label.split('_')[1])
+                            .attr({fill: 'maroon'})
+                            .translate(-15,0);
+                text.id = 'text_'+planet.label;
+
+                text.hide();
                 attatchHoverEvent(circle);
             }
         },
@@ -186,17 +199,15 @@ function Visualizer() {
         return clientInput;
     }
     this.searchPlanet = function (planetId) {
-        this.renderSolarSystem(paperInstance);
+       // remove glow from previously searched planet
+       if(prevSearchedPlanet) prevSearchedPlanet.remove();
         var planet = paperInstance.getById(planetId);
         if (!planet) alert('Planet Not Found');
         //highlight and zoom the searched planet
-        planet.glow({
+         prevSearchedPlanet = planet.glow({
             width: 10,
             color: 'red'
         });
-        // setTimeout(function () {
-        //     planet.hide();
-        // }, 2000)
     }
     this.renderSolarSystem = function (paper) {
         paperInstance = paper;
